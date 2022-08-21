@@ -1,50 +1,42 @@
+# Checks if the Alternate webshop has any Raspberry Pi’s in stock.
+
+require "nokogiri"
 require "open-uri"
-require "rexml/document"
 
-class Crawler
-  include REXML
+class AlternatePiMonitor
+  URL = URI.parse("https://www.alternate.be/listing.xhtml?q=RASPBERRY+PI&s=default&filter_-2=true&filter_416=1703")
+  #URL = URI.parse('https://www.alternate.be/listing.xhtml?q=RASPBERRY+PI&s=default&filter_416=1703')
 
-  #URL = URI("https://www.alternate.be/listing.xhtml?q=RASPBERRY+PI&s=default&filter_-2=true&filter_416=1703")
-  URL = URI('https://www.alternate.be/listing.xhtml?q=RASPBERRY+PI&s=default&filter_416=1703')
-  REMOVE_TAGS_REGEX = /<("[^"]*"|'[^']*'|[^'">])*>/
-
-  def fetch_and_parse
-    URI.open(URL).each_line do |line|
-      data[:name] = parse_name_line(line) if name_line?(line)
-      data[:price] = parse_price_line(line) if price_line?(line)
-      data[:stock] = parse_stock_line(line) if stock_line?(line)
-      p data unless data.keys.empty?
+  def run
+    products = []
+    page = Nokogiri::HTML(URI.open(URL))
+    page.css('.productBox').each do |box|
+      products << extract_product_data(box)
     end
+    p products.count
   end
 
-  def name_line?(line)
-    line.strip.start_with?('<div class="product-name')
+  def extract_product_data(box)
+    data = {}
+    data[:name] = clean_name(box)
+    data[:price] = clean_name(box)
+    data[:available] = clean_delivery_info(box)
+    data
   end
 
-  def parse_name_line(line)
-    remove_html(line).strip
+  def clean_name(box)
+    box.css('.product-name').text.squeeze(' ')
   end
 
-  def price_line?(line)
-    line.strip.start_with?('<div class="col-auto pl-0"><span class="price')
+  def clean_price(box)
+    raw = box.css('.price').text
+    raw.gsub(',','.').gsub(/[^\d.]/, '').to_f
   end
 
-  def parse_price_line(line)
-    remove_html(line).strip
-  end
-
-  def stock_line?(line)
-    line.strip.start_with?('<div class="col-auto delivery-info')
-  end
-
-  def parse_stock_line(line)
-    text = remove_html(line)
-    !text.strip.start_with?('Niet op voorraad, geen informatie beschikbaar')
-  end
-
-  def remove_html(line)
-    line.gsub(REMOVE_TAGS_REGEX, '')
+  def clean_delivery_info(box)
+    raw = box.css('.delivery-info').text
+    !raw.strip.include? 'Niet op voorraad, geen informatie beschikbaar'
   end
 end
 
-Crawler.new.fetch_and_parse
+AlternatePiMonitor.new.run
