@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
       - run: gem install nokogiri --no-document
       - run: ruby helloworld.rb
       #- name: Configure Nokogiri installation (Linux)
