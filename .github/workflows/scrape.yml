@@ -1,15 +1,25 @@
 name: Scrape
 on:
-  schedule:
-    - cron: 30 * * * sun
+  push:
+  #schedule:
+  #  - cron: 30 * * * sun
 jobs:
   scrape:
     runs-on: ubuntu-latest
     steps:
-      - run: >
-          curl
-          --request POST
-          --form "apikey=${{ secrets.PROWL_API_KEY }}"
-          --form "application=${{ github.event_name }}"
-          --form "description=Push from Github"
-          https://api.prowlapp.com/publicapi/add
+      - uses: actions/checkout@main
+      - run: gem install nokogiri --no-document
+      - run: ruby helloworld.rb
+      #- name: Configure Nokogiri installation (Linux)
+      #  run: |
+      #    bundle config --local build__nokogiri --use-system-libraries
+      #    sudo apt-get install libxslt1-dev
+
+      #- name: Notify Prowl
+      #  run: >
+      #    curl
+      #    --request POST
+      #    --form "apikey=${{ secrets.PROWL_API_KEY }}"
+      #    --form "application=${{ github.event_name }}"
+      #    --form "description=Push from Github"
+      #    https://api.prowlapp.com/publicapi/add
