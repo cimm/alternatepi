@@ -12,12 +12,7 @@ jobs:
         with:
           ruby-version: '3.0'
       - run: gem install nokogiri --no-document
-      - run: ruby helloworld.rb
-      #- name: Configure Nokogiri installation (Linux)
-      #  run: |
-      #    bundle config --local build__nokogiri --use-system-libraries
-      #    sudo apt-get install libxslt1-dev
-
+      - run: ruby crawler.rb
       #- name: Notify Prowl
       #  run: >
       #    curl
