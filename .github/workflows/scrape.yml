@@ -1,0 +1,15 @@
+name: Scrape
+on: [push]
+  schedule:
+    - cron: 30 * * * sun
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - run: >
+          curl
+          --request POST
+          --form "apikey=${{ secrets.PROWL_API_KEY }}"
+          --form "application=${{ github.event_name }}"
+          --form "description=Push from Github"
+          https://api.prowlapp.com/publicapi/add
