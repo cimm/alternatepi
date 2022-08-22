@@ -15,4 +15,5 @@ jobs:
         run: gem install nokogiri --no-document
       - name: Check Alternate
         run: ruby alternate_spider.rb
-        args: ${{ secrets.PROWL_API_KEY }}
+        with:
+          args: ${{ secrets.PROWL_API_KEY }}
