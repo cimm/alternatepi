@@ -14,4 +14,5 @@ jobs:
       - name: Install Nokogiri
         run: gem install nokogiri --no-document
       - name: Check Alternate
-        run: ruby alternate_spider.rb {{ secrets.PROWL_API_KEY }}
+        run: ruby alternate_spider.rb
+        args: ${{ secrets.PROWL_API_KEY }}
