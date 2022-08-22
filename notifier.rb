@@ -9,21 +9,22 @@ class Notifier
     @key = key
   end
 
-  def send(channel: :stdout)
-    case channel
-      when :prowl then to_prowl
-      else to_stdout
+  def send
+    if @key.nil?
+      send_stdout
+    else
+      send_prowl
     end
   end
 
-  def to_prowl
+  def send_prowl
     Net::HTTP.post_form(PROWL_URL,
                         apikey: @key,
                         application: @title,
                         description: @message)
   end
 
-  def to_stdout
+  def send_stdout
     puts '-- ' + @title
     puts @message
   end

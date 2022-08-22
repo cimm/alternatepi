@@ -4,12 +4,14 @@ on:
   #schedule:
   #  - cron: 30 * * * sun
 jobs:
-  scrape:
+  spider:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
-      - run: gem install nokogiri --no-document
-      - run: ruby alternate_spider.rb '{{ secrets.PROWL_API_KEY }}'
+      - name: Install Nokogiri
+        run: gem install nokogiri --no-document
+      - name: Check Alternate
+        run: ruby alternate_spider.rb '{{ secrets.PROWL_API_KEY }}'
