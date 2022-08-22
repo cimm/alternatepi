@@ -58,7 +58,7 @@ end
 
 alternate = AlternateSpider.new
 alternate.crawl(query: 'RASPBERRY PI', type: 1703)
-if !alternate.available?
+if alternate.available?
   message = 'New Pi’s available!'
   key = ARGV[0]
   Notifier.new(message: message, title: 'Alternate', key: key).send
